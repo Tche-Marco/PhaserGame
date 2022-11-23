@@ -65,6 +65,13 @@ class playGame extends Phaser.Scene {
     this.load.bitmapFont('font', 'assets/imgs/font.png', 'assets/imgs/font.fnt')
   }
   create() {
+    this.anims.create({
+      key: 'rotate',
+      frames: this.anims.generateFrameNumbers('coin', { start: 0, end: 5 }),
+      frameRate: 15,
+      repeat: -1
+    })
+
     this.sky = this.add.image(300, 1200, 'sky')
     this.sky.setScale(2, 4, 5, 5)
 
@@ -186,6 +193,7 @@ class playGame extends Phaser.Scene {
       'coin'
     )
     this.coin.visible = false
+    this.coin.anims.play('rotate')
   }
   addClouds() {
     let rightmostCloud = this.getRightmostCloud()
