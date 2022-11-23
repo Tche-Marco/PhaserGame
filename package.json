@@ -1,0 +1,14 @@
+{
+  "name": "encoinfo",
+  "version": "1.0.0",
+  "description": "Criando um projeto em phaser",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "marcomartins06@rede.ulbra.br",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.55.2"
+  }
+}
