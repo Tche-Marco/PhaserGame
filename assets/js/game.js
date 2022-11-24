@@ -10,10 +10,11 @@ let gameOptions = {
   rotateTime: 500,
   walkTime: 3,
   fallTime: 500,
-  scrollTime: 250
+  scrollTime: 250,
 }
 
 let firstPlay = true
+let points = 0
 
 const IDLE = 0
 const WAITING = 1
@@ -24,7 +25,7 @@ window.onload = function () {
     type: Phaser.AUTO,
     width: 750,
     height: 1334,
-    scene: [playGame]
+    scene: [playGame],
   }
   game = new Phaser.Game(gameConfig)
   window.focus()
@@ -38,21 +39,21 @@ class playGame extends Phaser.Scene {
   preload() {
     this.load.spritesheet('player', 'assets/imgs/player.png', {
       frameWidth: 24,
-      frameHeight: 48
+      frameHeight: 48,
     })
     this.load.spritesheet('coin', 'assets/imgs/coin.png', {
       frameWidth: 20,
-      frameHeight: 20
+      frameHeight: 20,
     })
 
     this.load.spritesheet('cloud', 'assets/imgs/cloud.png', {
       frameWidth: 512,
-      frameHeight: 512
+      frameHeight: 512,
     })
 
     this.load.spritesheet('mountain', 'assets/imgs/mountain.png', {
       frameWidth: 512,
-      frameHeight: 512
+      frameHeight: 512,
     })
 
     this.load.image('diamondparticle', 'assets/imgs/diamondparticle.png')
@@ -69,7 +70,14 @@ class playGame extends Phaser.Scene {
       key: 'rotate',
       frames: this.anims.generateFrameNumbers('coin', { start: 0, end: 5 }),
       frameRate: 15,
-      repeat: -1
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: 'run',
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
+      frameRate: 8,
+      repeat: -1,
     })
 
     this.sky = this.add.image(300, 1200, 'sky')
@@ -79,6 +87,11 @@ class playGame extends Phaser.Scene {
 
     this.cloudGroup = this.add.group()
     this.mountainGroup = this.add.group()
+
+    this.pointsText = this.add.text(20, 20, 'Pontos: ' + points, {
+      font: '36px Impact',
+      fill: '#fff700',
+    })
 
     this.addCoin()
     this.addPlatforms()
@@ -102,7 +115,7 @@ class playGame extends Phaser.Scene {
           'Press durante a travessia \npara pegar as moedas',
           200,
           280,
-          100
+          100,
         )
         setTimeout(() => {
           this.destroyMenu()
@@ -117,7 +130,7 @@ class playGame extends Phaser.Scene {
       .sprite(
         this.game.renderer.width / 2 - 150,
         this.game.renderer.height - 300,
-        'tile'
+        'tile',
       )
       .setDepth(2)
     this.box.setDisplaySize(1200, 300)
@@ -126,7 +139,7 @@ class playGame extends Phaser.Scene {
       .sprite(
         this.game.renderer.width / 2,
         this.game.renderer.height - tapY,
-        'tap'
+        'tap',
       )
       .setDepth(2)
     this.tweens.add({
@@ -134,7 +147,7 @@ class playGame extends Phaser.Scene {
       alpha: 0,
       duration: 2000,
       loop: -1,
-      ease: 'Cubic.easeIn'
+      ease: 'Cubic.easeIn',
     })
     this.titleText = this.add
       .bitmapText(
@@ -142,7 +155,7 @@ class playGame extends Phaser.Scene {
         this.game.renderer.height - 150 - 240,
         'font',
         title,
-        100
+        100,
       )
       .setDepth(2)
     this.titleText.setTintFill(0xfffff)
@@ -153,7 +166,7 @@ class playGame extends Phaser.Scene {
         this.game.renderer.height - 150 - 150,
         'font',
         text,
-        50
+        50,
       )
       .setDepth(2)
     this.tapText.setTintFill(0xffffff)
@@ -175,7 +188,7 @@ class playGame extends Phaser.Scene {
     let platform = this.add.sprite(
       posX,
       game.config.height - gameOptions.platformHeight,
-      'pillar'
+      'pillar',
     )
     platform.displayWidth =
       (gameOptions.platformWidthRange[0] + gameOptions.platformWidthRange[1]) /
@@ -190,7 +203,7 @@ class playGame extends Phaser.Scene {
       game.config.height -
         gameOptions.platformHeight +
         gameOptions.playerHeight / 2,
-      'coin'
+      'coin',
     )
     this.coin.visible = false
     this.coin.anims.play('rotate')
@@ -201,7 +214,7 @@ class playGame extends Phaser.Scene {
       let cloud = this.add.sprite(
         rightmostCloud + Phaser.Math.Between(100, 350),
         Phaser.Math.Between(200, 400),
-        'cloud'
+        'cloud',
       )
       this.cloudGroup.add(cloud)
       if (Phaser.Math.Between(0, 1)) {
@@ -217,7 +230,7 @@ class playGame extends Phaser.Scene {
       let mountain = this.add.sprite(
         rightmostMountain + Phaser.Math.Between(0, 350),
         game.config.height + Phaser.Math.Between(0, 100),
-        'mountain'
+        'mountain',
       )
       mountain.setOrigin(0.07, 1)
       this.mountainGroup.add(mountain)
@@ -238,7 +251,7 @@ class playGame extends Phaser.Scene {
   placeCoin() {
     this.coin.x = Phaser.Math.Between(
       this.platforms[this.mainPlatform].getBounds().right + 10,
-      this.platforms[1 - this.mainPlatform].getBounds().left - 10
+      this.platforms[1 - this.mainPlatform].getBounds().left - 10,
     )
     this.coin.visible = true
   }
@@ -247,11 +260,11 @@ class playGame extends Phaser.Scene {
       this.platforms[this.mainPlatform].displayWidth +
       Phaser.Math.Between(
         gameOptions.platformGapRange[0],
-        gameOptions.platformGapRange[1]
+        gameOptions.platformGapRange[1],
       )
     let size = Phaser.Math.Between(
       gameOptions.platformWidthRange[0],
-      gameOptions.platformWidthRange[1]
+      gameOptions.platformWidthRange[1],
     )
     this.tweens.add({
       targets: [this.platforms[1 - this.mainPlatform]],
@@ -262,14 +275,14 @@ class playGame extends Phaser.Scene {
       onComplete: function () {
         this.gameMode = WAITING
         this.placeCoin()
-      }
+      },
     })
   }
   addPlayer() {
     this.player = this.add.sprite(
       this.platforms[this.mainPlatform].displayWidth - gameOptions.poleWidth,
       game.config.height - gameOptions.platformHeight,
-      'player'
+      'player',
     )
     this.player.setOrigin(1, 1)
   }
@@ -277,7 +290,7 @@ class playGame extends Phaser.Scene {
     this.pole = this.add.sprite(
       this.platforms[this.mainPlatform].displayWidth,
       game.config.height - gameOptions.platformHeight,
-      'bridge'
+      'bridge',
     )
     this.pole.setOrigin(1, 1)
     this.pole.displayWidth = gameOptions.poleWidth
@@ -297,10 +310,11 @@ class playGame extends Phaser.Scene {
         targets: [this.pole],
         displayHeight:
           gameOptions.platformGapRange[1] + gameOptions.platformWidthRange[1],
-        duration: gameOptions.growTime
+        duration: gameOptions.growTime,
       })
     }
     if (this.gameMode == WALKING) {
+      this.player.anims.play('run')
       if (this.player.flipY) {
         this.player.flipY = false
         this.player.y = game.config.height - gameOptions.platformHeight
@@ -332,6 +346,7 @@ class playGame extends Phaser.Scene {
         this.pole.displayHeight >
         this.platforms[1 - this.mainPlatform].x - this.pole.x
       ) {
+        this.player.anims.play('run')
         this.tweens.add({
           targets: [this.pole],
           angle: 90,
@@ -361,26 +376,27 @@ class playGame extends Phaser.Scene {
                       this.player,
                       this.pole,
                       this.platforms[1 - this.mainPlatform],
-                      this.platforms[this.mainPlatform]
+                      this.platforms[this.mainPlatform],
                     ],
                     props: {
                       x: {
-                        value: '-= ' + this.platforms[1 - this.mainPlatform].x
-                      }
+                        value: '-= ' + this.platforms[1 - this.mainPlatform].x,
+                      },
                     },
                     duration: gameOptions.scrollTime,
                     callbackScope: this,
                     onComplete: function () {
+                      points += 5
+                      this.pointsText.text = 'Pontos: ' + points
                       this.prepareNextMove()
-                    }
+                    },
                   })
-                }
+                },
               })
             } else {
-              //ponte superior ao tamanho do 2 pilar
-              this.fallAndDie()
+              this.platformTooLong()
             }
-          }
+          },
         })
       } else {
         this.platformTooShort()
@@ -395,6 +411,7 @@ class playGame extends Phaser.Scene {
       ease: 'Cubic.easeIn',
       callbackScope: this,
       onComplete: function () {
+        this.player.anims.play('run')
         this.gameMode = WALKING
         this.tweens.add({
           targets: [this.player],
@@ -406,12 +423,23 @@ class playGame extends Phaser.Scene {
               targets: [this.pole],
               angle: 180,
               duration: gameOptions.rotateTime,
-              ease: 'Cubic.easeIn'
+              ease: 'Cubic.easeIn',
             })
             this.fallAndDie()
-          }
+          },
         })
-      }
+      },
+    })
+  }
+  platformTooLong() {
+    this.walkTween = this.tweens.add({
+      targets: [this.player],
+      x: this.pole.x + this.pole.displayHeight,
+      duration: this.pole.displayHeight + gameOptions.walkTime,
+      callbackScope: this,
+      onComplete: function () {
+        this.fallAndDie()
+      },
     })
   }
   fallAndDie() {
@@ -424,7 +452,7 @@ class playGame extends Phaser.Scene {
       callbackScope: this,
       onComplete: function () {
         this.shakeAndRestart()
-      }
+      },
     })
   }
   prepareNextMove() {
@@ -444,8 +472,9 @@ class playGame extends Phaser.Scene {
       delay: 800,
       callbackScope: this,
       callback: function () {
+        points = 0
         this.scene.start('PlayGame')
-      }
+      },
     })
   }
   update() {
@@ -469,7 +498,7 @@ class playGame extends Phaser.Scene {
           speed: 65,
           frequency: 25,
           scale: { start: 1, end: 0 },
-          blendMode: 'ADD'
+          blendMode: 'ADD',
         })
         emitter.setAlpha(0.4, 0.6)
         emitter.setScale(0.4, 0.6, 0.4, 0.6)
@@ -481,6 +510,8 @@ class playGame extends Phaser.Scene {
         }, 250)
 
         this.coin.visible = false
+        points++
+        this.pointsText.text = 'Pontos: ' + points
       }
     }
   }
